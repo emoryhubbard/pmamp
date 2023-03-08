@@ -24,8 +24,31 @@ services:
       - "./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.php-apache.rule=Host(`localhost`, `lvh.me`, `pmamp.lvh.me`, `127.0.0.1`)"
+      # Works for 76.144.198.218/pmamp/ and 76.144.198.218/pmamp/phpmotors/
+      # Also note that you can't use the public IP address to test this
+      # on the host computer, nor can you use it to test it on any
+      # computer on its wifi network.
+      - "traefik.http.routers.php-apache.rule=Host(`76.114.198.218`) && PathPrefix(`/pmamp`)"
+      - "traefik.http.routers.php-apache.middlewares=php-apache-stripprefix"
+      - "traefik.http.middlewares.php-apache-stripprefix.stripprefix.prefixes=/pmamp"
+      - "traefik.http.middlewares.php-apache-stripprefix.stripprefix.forceSlash=false"
       - "traefik.http.routers.php-apache.entrypoints=web"
+      # Works for 76.144.198.218/pmamp/ and 76.144.198.218/pmamp/phpmotors/
+      # Interstingly enough, both this and the one above seem to work the same--both
+      # require the trailing slash to be entered by the user.
+      # If you don't enter it when you try to go to eg. /phpmotors, the
+      # URL is redirected to 76.144.198.218/phpmotors on the browser.
+      # Note that I use "test-stripprefix here". You could just as
+      # easily use "test". However, test-stripprefix lets you
+      # remember what it's for. Also, I later changed it to
+      # php-apache-stripprefix because it will clash with
+      # any other stripprefix middleware you are trying to define
+      # in another service with the same name, making the routing
+      # not function properly.
+      #- "traefik.http.routers.php-apache.rule=Host(`76.114.198.218`) && PathPrefix(`/pmamp/`)"
+      #- "traefik.http.routers.php-apache.middlewares=test-stripprefix"
+      #- "traefik.http.middlewares.test-stripprefix.stripprefix.prefixes=/pmamp/"
+      #- "traefik.http.middlewares.test-stripprefix.stripprefix.forceSlash=false"
 
   mysql:
     image: "mysql:8.0.27"
@@ -39,8 +62,9 @@ services:
     command: 
       - "--default-authentication-plugin=mysql_native_password"
     environment:
+      # default root username is "root"
       MYSQL_ROOT_PASSWORD: "rootPASS"
-      MYSQL_DATABASE: "dbase"
+      MYSQL_DATABASE: "phpmotors"
       MYSQL_USER: "dbuser"
       MYSQL_PASSWORD: "dbpass"
     labels:
@@ -58,8 +82,17 @@ services:
       UPLOAD_LIMIT: "256M"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`pma.localhost`, `pma.lvh.me`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
+      # Note that when you try to sign in, you will get a 404 error,
+      # but you can get on afterwards by using the /pma/ URL
+      # (ie. the back button). It seems to continue to work
+      # normally after that. I noticed that the sign-in URL
+      # had the /pma missing when you hit the sign-in button,
+      # which was why there was a 404 error. Needs to be fixed.
+      - "traefik.http.routers.phpmyadmin.rule=Host(`76.114.198.218`) && PathPrefix(`/pma`)"
+      - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
+      - "traefik.http.middlewares.phpmyadmin-stripprefix.stripprefix.prefixes=/pma"
+      - "traefik.http.middlewares.phpmyadmin-stripprefix.stripprefix.forceSlash=false"
+      - "traefik.http.routers.phpmyadmin.entrypoints=web"
 
 networks:
   default:
