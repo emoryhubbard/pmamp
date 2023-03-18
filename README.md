@@ -1,7 +1,7 @@
 # A Dockerized, Self-Hosted AMP (Apache, MySQL and PHP)
 
 This is based on an AMP wired together through Docker containers by Ammon
-Shephered: https://github.com/ammonshepherd/pmamp
+Shepherd: https://github.com/ammonshepherd/pmamp
 
 The chief difference is that the docker-compose.yml file has been
 substantially modified in order to allow the Traefik reverse proxy server
