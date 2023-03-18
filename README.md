@@ -7,7 +7,8 @@ The chief difference is that the docker-compose.yml file has been
 substantially modified in order to allow the Traefik reverse proxy server
 to interface with the outside world, instead of living only in a local
 development environment. You must simply replace the IP address within
-the docker-compose.yml with your own.
+the docker-compose.yml with your own, and configure your router
+appropriately. Tutorial coming soon.
 
 Originally, this was inspired by me wanting to help a friend use and develop
 on Docker containers when his own tooling wasn't working on his computer, no
