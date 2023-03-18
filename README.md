@@ -1,3 +1,21 @@
+# A Dockerized, Self-Hosted AMP (Apache, MySQL and PHP)
+
+This is based on an AMP wired together through Docker containers by Ammon
+Shephered: https://github.com/ammonshepherd/pmamp
+
+The chief difference is that the docker-compose.yml file has been
+substantially modified in order to allow the Traefik reverse proxy server
+to interface with the outside world, instead of living only in a local
+development environment. You must simply replace the IP address within
+the docker-compose.yml with your own.
+
+Originally, this was inspired by me wanting to help a friend use and develop
+on Docker containers when his own tooling wasn't working on his computer, no
+matter what he tried. I soon realized that the ability to host and deploy
+your own servers and back-end APIs was broadly useful, and decided to apply it
+for a final project.
+
+Ammon Shepherd's documentation of the original PMAMP repo:
 # PMAMP - PhpMyadmin with Apache Mysql and Php
 
 Docker with Apache, PHP, MySQL, phpMyAdmin
